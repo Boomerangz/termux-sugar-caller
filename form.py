@@ -83,10 +83,11 @@ def run_loop():
                 
             last_treatment = sorted(filtered_treatments, key=lambda x: x['date'])[-1]
             since_last_treatment = (datetime.now().timestamp()*1000) - last_treatment['date']
-            if since_last_treatment > 1000 * 60 * 3:
+            if since_last_treatment > 1000 * 60 * 45:
                 print('Calling')
                 # run termux call command
                 os.system(f'termux-telephony-call {phone_number}')
+                time.sleep(60 * 5)
 
 
         
