@@ -50,6 +50,7 @@ class MainForm(npyscreen.ActionForm):
         self.parentApp.setNextForm(None)
 
 def run_loop():
+    os.system('cls')
     while True:
         r = requests.get('http://mark2.oulu.io/api/v1/entries/current.json', timeout=5)
         js = r.json()
