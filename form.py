@@ -33,8 +33,8 @@ class MainForm(npyscreen.ActionForm):
     def on_ok(self):
         # Save current data to disk
         data = {
-            'min_bg': int(self.min_bg.value),
-            'max_bg': int(self.max_bg.value),
+            'min_bg': float(self.min_bg.value),
+            'max_bg': float(self.max_bg.value),
             'phone_number': self.phone_number.value
         }
         with open(self.filename, 'wb') as f:
