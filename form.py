@@ -3,7 +3,7 @@ import pickle
 import os
 import requests
 import time
-import datetime
+from datetime import datetime
 
 min_bg = 4
 max_bg = 10
