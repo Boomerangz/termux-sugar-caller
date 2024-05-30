@@ -27,6 +27,9 @@ class MainForm(npyscreen.ActionForm):
         self.max_bg = self.add(npyscreen.TitleText, name='Maximum BG:', value=str(data['max_bg']))
         self.phone_number = self.add(npyscreen.TitleText, name='Phone Number:', value=data['phone_number'])
 
+        # This will set the focus on the OK button by default
+        self.editw = len(self._widgets__) - 2  # Focus the widget just before the last (OK button)
+
     def on_ok(self):
         # Save current data to disk
         data = {
