@@ -68,10 +68,12 @@ def run_loop():
         elif current_sgv > max_bg and delta >= 0:
             bad = True
 
-        bad = True
-
         if bad:
             print('Bad')
+            if current_sgv < min_bg and delta <= 0:
+                print('Low')
+            else:
+                print('High')
             r = requests.get('https://mark2.oulu.io/api/v1/treatments.json', timeout=5)
             treatments = r.json()
             filtered_treatments = None
