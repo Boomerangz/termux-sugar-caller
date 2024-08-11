@@ -35,7 +35,12 @@ while True:
 
     if bad:
         print('Bad')
-        r = requests.get('https://mark2.oulu.io/api/v1/treatments.json', timeout=5)
+        try:
+            r = requests.get('https://mark2.oulu.io/api/v1/treatments.json', timeout=5)
+        except Exception as e:
+            traceback.print_exc()
+            time.sleep(5)
+            continue
         treatments = r.json()
         filtered_treatments = None
         if delta > 0:
