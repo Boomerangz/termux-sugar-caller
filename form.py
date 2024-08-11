@@ -95,9 +95,9 @@ def run_loop():
                 filtered_treatments = [t for t in treatments if t['eventType'] == 'Carb Correction']
 
             last_treatment = sorted(filtered_treatments, key=lambda x: x['date'])[-1]
-            since_last_treatment = (datetime.now().timestamp() * 1000) - last_treatment['date']
+            since_last_treatment = (datetime.now().timestamp()) - last_treatment['date']
             output.append(f"{last_treatment['date']} Last treatment date")
-            output.append(f"{(datetime.now().timestamp() * 1000)} Now")
+            output.append(f"{(datetime.now())} Now")
             output.append(f"{since_last_treatment} Since last treatment")
 
             if since_last_treatment > 1000 * 60 * 45:
