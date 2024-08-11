@@ -61,25 +61,27 @@ def run_loop():
             continue
         js = r.json()
         dt = datetime.now()
-        delta = round(js[0].get('delta')* 0.0555, 1)
-        print(js[0]['sgv'] * 0.0555)
-        print(delta)
-        print(dt, dt.second, 30 - (dt.second % 30))
-
+        delta = round(js[0].get('delta') * 0.0555, 1)
         current_sgv = js[0]['sgv'] * 0.0555
-
         bad = False
+
+        output = []
+
+        output.append(f"SGV: {current_sgv:.1f}")
+        output.append(f"Delta: {delta:.1f}")
+        output.append(f"Time: {dt} {dt.second} seconds, next check in {30 - (dt.second % 30)} seconds")
+
         if current_sgv < min_bg and delta <= 0:
             bad = True
         elif current_sgv > max_bg and delta >= 0:
             bad = True
 
         if bad:
-            print('Bad')
+            output.append('Bad')
             if current_sgv < min_bg and delta <= 0:
-                print('Low')
+                output.append('Low')
             else:
-                print('High')
+                output.append('High')
             try:
                 r = requests.get('https://mark2.oulu.io/api/v1/treatments.json', timeout=5)
             except Exception as e:
@@ -87,25 +89,27 @@ def run_loop():
                 time.sleep(5)
                 continue
             treatments = r.json()
-            filtered_treatments = None
             if delta > 0:
                 filtered_treatments = [t for t in treatments if t['eventType'] == 'Meal Bolus']
             else:
                 filtered_treatments = [t for t in treatments if t['eventType'] == 'Carb Correction']
 
-                
             last_treatment = sorted(filtered_treatments, key=lambda x: x['date'])[-1]
-            since_last_treatment = (datetime.now().timestamp()*1000) - last_treatment['date']
-            print(since_last_treatment, "Since last treatment")
+            since_last_treatment = (datetime.now().timestamp() * 1000) - last_treatment['date']
+            output.append(f"{last_treatment['date']} Last treatment date")
+            output.append(f"{(datetime.now().timestamp() * 1000)} Now")
+            output.append(f"{since_last_treatment} Since last treatment")
+
             if since_last_treatment > 1000 * 60 * 45:
-                print('Calling')
+                output.append('Calling')
+                # Join all parts of the output and print in one go
+                print("\n".join(output))
                 # run termux call command
                 os.system(f'termux-telephony-call {phone_number}')
                 time.sleep(60 * 5)
-
-
-        
-
+            else:
+                # Join all parts of the output and print in one go
+                print("\n".join(output))
 
         time.sleep(30 - (dt.second % 30))
 
