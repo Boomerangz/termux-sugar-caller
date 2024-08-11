@@ -95,13 +95,19 @@ def run_loop():
                 filtered_treatments = [t for t in treatments if t['eventType'] == 'Carb Correction']
 
             last_treatment = sorted(filtered_treatments, key=lambda x: x['date'])[-1]
-            since_last_treatment = (datetime.now().timestamp()) - last_treatment['date']
+            # The timestamp in milliseconds
+            timestamp_ms = last_treatment['date']
+            # Convert milliseconds to seconds
+            timestamp_s = timestamp_ms / 1000.0
+            # Parse the timestamp
+            last_treatment_dt = datetime.fromtimestamp(timestamp_s)
+            since_last_treatment = (datetime.now() - last_treatment_dt).total_seconds()
             output.append(f"{last_treatment['date']} Last treatment date")
             output.append(f"{(datetime.now().timestamp())} Now")
             output.append(f"{(datetime.now())} Now")
             output.append(f"{since_last_treatment} Since last treatment")
 
-            if since_last_treatment > 1000 * 60 * 45:
+            if since_last_treatment > 60 * 45:
                 output.append('Calling')
                 # Join all parts of the output and print in one go
                 print("\t".join(output))
