@@ -2,6 +2,7 @@ import requests
 import time
 from datetime import datetime
 import os
+import traceback
 
 
 min_bg = 4
@@ -9,7 +10,12 @@ max_bg = 8
 phone_number = '+7981247517'
 
 while True:
-    r = requests.get('http://mark2.oulu.io/api/v1/entries/current.json', timeout=5)
+    try:
+        r = requests.get('http://mark2.oulu.io/api/v1/entries/current.json', timeout=5)
+    except Exception as e:
+        traceback.print_exc()
+        time.sleep(5)
+        continue
     js = r.json()
     dt = datetime.now()
     delta = round(js[0].get('delta')* 0.0555, 1)
@@ -40,6 +46,7 @@ while True:
             
         last_treatment = sorted(filtered_treatments, key=lambda x: x['date'])[-1]
         since_last_treatment = (datetime.now().timestamp()*1000) - last_treatment['date']
+        print(since_last_treatment, "Since last treatment")
         if since_last_treatment > 1000 * 60 * 3:
             print('Calling')
             # run termux call command
