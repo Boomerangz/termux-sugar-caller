@@ -4,6 +4,7 @@ import os
 import requests
 import time
 from datetime import datetime
+import traceback
 
 min_bg = 4
 max_bg = 10
