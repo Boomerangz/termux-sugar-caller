@@ -116,6 +116,9 @@ def run_loop():
             else:
                 # Join all parts of the output and print in one go
                 print("\t".join(output))
+        else:
+            # Join all parts of the output and print in one go
+            print("\t".join(output))
 
         time.sleep(30 - (dt.second % 30))
 
