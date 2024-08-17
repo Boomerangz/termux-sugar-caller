@@ -89,9 +89,9 @@ def run_loop():
                 time.sleep(5)
                 continue
             treatments = r.json()
-            if delta > 0:
+            if current_sgv > max_bg:
                 filtered_treatments = [t for t in treatments if t['eventType'] == 'Meal Bolus']
-            else:
+            elif current_sgv < min_bg:
                 filtered_treatments = [t for t in treatments if t['eventType'] == 'Carb Correction']
 
             last_treatment = sorted(filtered_treatments, key=lambda x: x['date'])[-1]
