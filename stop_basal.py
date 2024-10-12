@@ -77,9 +77,10 @@ def fetch_incoming_sms():
     Returns a list of messages sorted by ID in ascending order.
     """
     try:
-        result = subprocess.run(['termux-sms-list', '-l', '50'], capture_output=True, text=True, check=True)
+        result = subprocess.run(['termux-sms-list', '-l', '1'], capture_output=True, text=True, check=True)
         messages = json.loads(result.stdout)
         # Sort messages by ID in ascending order
+        messages = [m for m in messages if m['body'] == SMS_MESSAGE]
         messages_sorted = sorted(messages, key=lambda x: int(x['_id']))
         return messages_sorted
     except subprocess.CalledProcessError as e:
@@ -111,15 +112,15 @@ def process_incoming_sms():
     new_messages = []
 
     for msg in messages:
-        msg_id = int(msg.get('id', 0))
+        msg_id = int(msg.get('_id', 0))
         if last_processed_sms_id is None or msg_id > last_processed_sms_id:
             new_messages.append(msg)
 
     if new_messages:
         for msg in new_messages:
-            sender = msg.get('address')
+            sender = msg.get('number')
             content = msg.get('body', '')
-            msg_id = int(msg.get('id', 0))
+            msg_id = int(msg.get('_id', 0))
             print(f"[{current_time}] New SMS from {sender}: '{content}'")
             # Check for three-letter code
             match = re.search(CODE_PATTERN, content)
