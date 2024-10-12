@@ -18,9 +18,15 @@ ALERT_COOLDOWN = timedelta(hours=1)  # Minimum time between SMS alerts
 SMS_CHECK_INTERVAL = 60  # Check for new SMS every 60 seconds
 CODE_PATTERN = r'\b[A-Za-z]{3}\b'  # Regex pattern for three-letter codes
 
+# New Constants for Conditional SMS Response Handling
+RESPONSE_WINDOW = timedelta(minutes=1)  # Time window to await response after alert
+RESPONSE_CHECK_INTERVAL = 10  # How often to check for response within the window
+
 # Global variables
 last_alert_time = None
 last_processed_sms_id = None
+awaiting_response = False
+response_handled = False
 
 def fetch_data(url):
     try:
@@ -86,8 +92,21 @@ def fetch_incoming_sms():
 def process_incoming_sms():
     """
     Processes incoming SMS messages, identifies three-letter codes, and responds.
+    Only processes if awaiting_response is True and within RESPONSE_WINDOW.
     """
-    global last_processed_sms_id
+    global last_processed_sms_id, awaiting_response, response_handled, alert_sent_time
+
+    if not awaiting_response:
+        return  # Not awaiting a response, so do nothing
+
+    current_time = datetime.now()
+    if alert_sent_time is None or current_time - alert_sent_time > RESPONSE_WINDOW:
+        # Response window has expired
+        print(f"[{current_time}] Response window expired. No response received.")
+        awaiting_response = False
+        response_handled = False
+        return
+
     messages = fetch_incoming_sms()
     new_messages = []
 
@@ -101,24 +120,26 @@ def process_incoming_sms():
             sender = msg.get('address')
             content = msg.get('body', '')
             msg_id = int(msg.get('id', 0))
-            print(f"[{datetime.now()}] New SMS from {sender}: '{content}'")
+            print(f"[{current_time}] New SMS from {sender}: '{content}'")
             # Check for three-letter code
             match = re.search(CODE_PATTERN, content)
             if match:
                 code = match.group(0)
-                print(f"[{datetime.now()}] Three-letter code '{code}' found. Sending back to {sender}.")
+                print(f"[{current_time}] Three-letter code '{code}' found. Sending back to {sender}.")
                 send_sms(sender, code)
+                response_handled = True
+                awaiting_response = False  # Reset awaiting_response after handling
+                last_processed_sms_id = msg_id  # Update last processed SMS ID
+                break  # Handle only one response per alert
             else:
-                print(f"[{datetime.now()}] No three-letter code found in the message.")
-            # Update the last processed SMS ID
-            if last_processed_sms_id is None or msg_id > last_processed_sms_id:
-                last_processed_sms_id = msg_id
+                print(f"[{current_time}] No three-letter code found in the message.")
+                last_processed_sms_id = msg_id  # Update last processed SMS ID even if no code
     else:
-        print(f"[{datetime.now()}] No new SMS messages.")
+        print(f"[{current_time}] No new SMS messages during response window.")
 
 def main():
-    global last_alert_time
-    print("Starting glucose monitoring script with SMS alert and response...")
+    global last_alert_time, awaiting_response, response_handled, alert_sent_time
+    print("Starting glucose monitoring script with conditional SMS alert and response...")
     last_sms_check = datetime.now() - timedelta(seconds=SMS_CHECK_INTERVAL)
     while True:
         current_time = datetime.now()
@@ -153,6 +174,11 @@ def main():
                     if should_send_alert(current_time):
                         send_sms(SMS_RECIPIENT, SMS_MESSAGE)
                         last_alert_time = current_time
+                        alert_sent_time = current_time
+                        awaiting_response = True
+                        response_handled = False
+                        # Start a separate thread or manage the response window
+                        # For simplicity, we'll check in the main loop
                     else:
                         print(f"[{current_time}] Alert already sent within the cooldown period.")
                 else:
@@ -160,7 +186,15 @@ def main():
 
         # Check for incoming SMS messages at defined intervals
         if (current_time - last_sms_check) >= timedelta(seconds=SMS_CHECK_INTERVAL):
-            process_incoming_sms()
+            if awaiting_response:
+                # Check if within response window
+                if alert_sent_time and (current_time - alert_sent_time <= RESPONSE_WINDOW):
+                    process_incoming_sms()
+                elif alert_sent_time and (current_time - alert_sent_time > RESPONSE_WINDOW):
+                    # Response window expired without receiving a response
+                    print(f"[{current_time}] Response window expired without receiving a response.")
+                    awaiting_response = False
+                    response_handled = False
             last_sms_check = current_time
 
         # Wait for the next fetch
