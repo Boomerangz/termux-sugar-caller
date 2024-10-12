@@ -11,7 +11,7 @@ FETCH_INTERVAL = 300  # Fetch every 5 minutes (300 seconds)
 MG_DL_TO_MOL_L = 0.0555  # Conversion factor from mg/dL to mmol/L
 TARGET_MOL_L = 5.5  # Target glucose level in mmol/L for SMS alert
 PREDICTION_HOUR = 1  # Prediction time in hours
-SMS_RECIPIENT = '+1234567890'  # Replace with the recipient's phone number
+SMS_RECIPIENT = '+79857348536'  # Replace with the recipient's phone number
 SMS_MESSAGE = 'basal 0'
 ALERT_COOLDOWN = timedelta(hours=1)  # Minimum time between SMS alerts
 
