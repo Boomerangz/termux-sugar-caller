@@ -77,7 +77,7 @@ def fetch_incoming_sms():
     Returns a list of messages sorted by ID in ascending order.
     """
     try:
-        result = subprocess.run(['termux-messaging-list', '-l', '50'], capture_output=True, text=True, check=True)
+        result = subprocess.run(['termux-sms-list', '-l', '50'], capture_output=True, text=True, check=True)
         messages = json.loads(result.stdout)
         # Sort messages by ID in ascending order
         messages_sorted = sorted(messages, key=lambda x: int(x['id']))
