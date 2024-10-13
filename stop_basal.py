@@ -11,9 +11,9 @@ FETCH_INTERVAL = 300  # Fetch every 5 minutes (300 seconds)
 MG_DL_TO_MOL_L = 0.0555  # Conversion factor from mg/dL to mmol/L
 TARGET_MOL_L = 5.5  # Target glucose level in mmol/L for SMS alert
 PREDICTION_HOUR = 0.5  # Prediction time in hours
-SMS_RECIPIENT = '+79857348536'  # Replace with the recipient's phone number
+SMS_RECIPIENT = '+79956282117'  # Replace with the recipient's phone number
 SMS_MESSAGE = 'basal 0'
-ALERT_COOLDOWN = timedelta(hours=1)  # Minimum time between SMS alerts
+ALERT_COOLDOWN = timedelta(hours=0.5)  # Minimum time between SMS alerts
 
 SMS_CHECK_INTERVAL = 60  # Check for new SMS every 60 seconds
 CODE_PATTERN = r'\b[A-Za-z]{3}\b'  # Regex pattern for three-letter codes
@@ -174,6 +174,7 @@ def main():
                     print(f"⚠️ ALERT: Glucose is projected to reach {projected_glucose:.2f} mmol/L in {PREDICTION_HOUR} hour(s).")
                     if should_send_alert(current_time):
                         send_sms(SMS_RECIPIENT, SMS_MESSAGE)
+                        time.sleep(60)
                         last_alert_time = current_time
                         alert_sent_time = current_time
                         awaiting_response = True
