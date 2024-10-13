@@ -174,7 +174,7 @@ def main():
                     print(f"⚠️ ALERT: Glucose is projected to reach {projected_glucose:.2f} mmol/L in {PREDICTION_HOUR} hour(s).")
                     if should_send_alert(current_time):
                         send_sms(SMS_RECIPIENT, SMS_MESSAGE)
-                        time.sleep(60)
+                        time.sleep(15)
                         last_alert_time = current_time
                         alert_sent_time = current_time
                         awaiting_response = True
