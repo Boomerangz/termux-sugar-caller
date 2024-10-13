@@ -192,7 +192,6 @@ def main():
                 # Check if within response window
                 if alert_sent_time and (current_time - alert_sent_time <= RESPONSE_WINDOW):
                     process_incoming_sms()
-                    time.sleep(60 * 31)
                 elif alert_sent_time and (current_time - alert_sent_time > RESPONSE_WINDOW):
                     # Response window expired without receiving a response
                     print(f"[{current_time}] Response window expired without receiving a response.")
