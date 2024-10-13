@@ -80,7 +80,7 @@ def fetch_incoming_sms():
         result = subprocess.run(['termux-sms-list', '-l', '1'], capture_output=True, text=True, check=True)
         messages = json.loads(result.stdout)
         # Sort messages by ID in ascending order
-        messages = [m for m in messages if m['body'] == SMS_MESSAGE]
+        messages = [m for m in messages if m['number'] == SMS_RECIPIENT]
         messages_sorted = sorted(messages, key=lambda x: int(x['_id']))
         return messages_sorted
     except subprocess.CalledProcessError as e:
