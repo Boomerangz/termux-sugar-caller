@@ -10,7 +10,7 @@ URL = 'https://mark.zygin.dev/api/v1/entries/current.json'
 FETCH_INTERVAL = 300  # Fetch every 5 minutes (300 seconds)
 MG_DL_TO_MOL_L = 0.0555  # Conversion factor from mg/dL to mmol/L
 TARGET_MOL_L = 5.9  # Target glucose level in mmol/L for SMS alert
-PREDICTION_HOUR = 0.5  # Prediction time in hours
+PREDICTION_HOUR = 0.8  # Prediction time in hours
 SMS_RECIPIENT = '+79956282117'  # Replace with the recipient's phone number
 SMS_MESSAGE = 'basal 0'
 ALERT_COOLDOWN = timedelta(hours=0.5)  # Minimum time between SMS alerts
@@ -19,7 +19,7 @@ SMS_CHECK_INTERVAL = 60  # Check for new SMS every 60 seconds
 CODE_PATTERN = r'\b[A-Za-z]{3}\b'  # Regex pattern for three-letter codes
 
 # New Constants for Conditional SMS Response Handling
-RESPONSE_WINDOW = timedelta(minutes=1)  # Time window to await response after alert
+RESPONSE_WINDOW = timedelta(minutes=1.5)  # Time window to await response after alert
 RESPONSE_CHECK_INTERVAL = 10  # How often to check for response within the window
 
 # Global variables
@@ -106,7 +106,7 @@ def process_incoming_sms():
         print(f"[{current_time}] Response window expired. No response received.")
         awaiting_response = False
         response_handled = False
-        return
+        return True
 
     messages = fetch_incoming_sms()
     new_messages = []
@@ -131,12 +131,14 @@ def process_incoming_sms():
                 response_handled = True
                 awaiting_response = False  # Reset awaiting_response after handling
                 last_processed_sms_id = msg_id  # Update last processed SMS ID
-                break  # Handle only one response per alert
+                return True  # Handle only one response per alert
             else:
                 print(f"[{current_time}] No three-letter code found in the message.")
                 last_processed_sms_id = msg_id  # Update last processed SMS ID even if no code
     else:
         print(f"[{current_time}] No new SMS messages during response window.")
+    
+    return False
 
 def main():
     global last_alert_time, awaiting_response, response_handled, alert_sent_time
@@ -191,7 +193,10 @@ def main():
             if awaiting_response:
                 # Check if within response window
                 if alert_sent_time and (current_time - alert_sent_time <= RESPONSE_WINDOW):
-                    process_incoming_sms()
+                    processed = False
+                    while not processed:
+                        processed = process_incoming_sms()
+                        time.sleep(15)
                 elif alert_sent_time and (current_time - alert_sent_time > RESPONSE_WINDOW):
                     # Response window expired without receiving a response
                     print(f"[{current_time}] Response window expired without receiving a response.")
