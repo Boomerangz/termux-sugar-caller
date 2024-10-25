@@ -13,7 +13,7 @@ TARGET_MOL_L = 5.9  # Target glucose level in mmol/L for SMS alert
 PREDICTION_HOUR = 0.8  # Prediction time in hours
 
 TARGET_MOL_L_MAX = 9  # Target glucose level in mmol/L for SMS alert
-TARGET_MOL_L_PERFECT = 7  # Target glucose level
+TARGET_MOL_L_PERFECT = 6.9  # Target glucose level
 
 SMS_RECIPIENT = '+79956282117'  # Replace with the recipient's phone number
 SMS_MESSAGE_ZERO = 'basal 0'
