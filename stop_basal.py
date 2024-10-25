@@ -153,6 +153,7 @@ def process_incoming_sms():
 
 def send_sms_and_approve(recipient, message):
     send_sms(recipient, message)
+    awaiting_response = True
     processed = False
     while not processed:
         print(f'[{datetime.now()}] checking response')
