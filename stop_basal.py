@@ -115,7 +115,7 @@ def process_incoming_sms():
     current_time = datetime.now()
     if alert_sent_time is None or current_time - alert_sent_time > RESPONSE_WINDOW:
         # Response window has expired
-        print(f"[{current_time}] Response window expired. No response received.")
+        print(f"[{current_time}] Response window expired. No response received. Alert sent time {alert_sent_time}")
         awaiting_response = False
         response_handled = False
         return True
