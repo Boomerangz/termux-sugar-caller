@@ -242,7 +242,7 @@ class GlucoseMonitor:
                         )
                         if self.should_send_alert(current_time, 'max'):
                             self.handle_alert(projected_glucose, 'max')
-                    elif self.last_alert_time  and datetime.now() - self.last_alert_time < self.config.ALERT_COOLDOWN:
+                    elif self.sms_handler.last_alert_time  and datetime.now() - self.sms_handler.last_alert_time < self.config.ALERT_COOLDOWN:
                         logging.warning(
                             f"⚠️ ALERT: Glucose is normal. Canceling temporary basal"
                         )
