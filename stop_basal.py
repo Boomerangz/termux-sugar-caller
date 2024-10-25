@@ -156,6 +156,8 @@ def process_incoming_sms():
 def send_sms_and_approve(recipient, message):
     global awaiting_response
     # send_sms(recipient, message)
+    last_alert_time = current_time
+    alert_sent_time = current_time
     awaiting_response = True
     processed = False
     while not processed:
@@ -204,8 +206,6 @@ def main():
                     print(f"⚠️ ALERT: Glucose is projected to reach {projected_glucose:.2f} mmol/L in {PREDICTION_HOUR} hour(s).")
                     if should_send_alert(current_time, 'min'):
                         send_sms_and_approve(SMS_RECIPIENT, SMS_MESSAGE_ZERO)
-                        last_alert_time = current_time
-                        alert_sent_time = current_time
                         last_alert_type = 'min'
                         # Start a separate thread or manage the response window
                         # For simplicity, we'll check in the main loop
@@ -215,8 +215,6 @@ def main():
                     print(f"⚠️ ALERT: Glucose is projected to reach {projected_glucose:.2f} mmol/L in {PREDICTION_HOUR} hour(s).")
                     if should_send_alert(current_time, 'max'):
                         send_sms_and_approve(SMS_RECIPIENT, SMS_MESSAGE_MAX_BASAL)
-                        last_alert_time = current_time
-                        alert_sent_time = current_time
                         last_alert_type = 'max'
                 else:
                     print("Glucose level is within safe range.")
