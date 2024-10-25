@@ -61,7 +61,7 @@ class SMSHandler:
         try:
             result = subprocess.run(['termux-sms-list', '-l', '50'], capture_output=True, text=True, check=True)
             messages = json.loads(result.stdout)
-            messages_sorted = sorted(messages, key=lambda x: int(x['_id']))
+            messages_sorted = sorted(messages, key=lambda x: int(x['_id']), reverse=True)
             return messages_sorted
         except subprocess.CalledProcessError as e:
             logging.error(f"Failed to fetch SMS messages: {e}")
@@ -103,7 +103,7 @@ class SMSHandler:
             if self.last_processed_sms_id is None or int(msg.get('_id', 0)) > self.last_processed_sms_id
         ]
 
-        for msg in new_messages[-1]:
+        for msg in new_messages:
             sender = msg.get('number')
             content = msg.get('body', '')
             msg_id = int(msg.get('_id', 0))
