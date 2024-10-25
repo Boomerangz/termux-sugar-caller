@@ -103,7 +103,7 @@ class SMSHandler:
             if self.last_processed_sms_id is None or int(msg.get('_id', 0)) > self.last_processed_sms_id
         ]
 
-        for msg in new_messages:
+        for msg in new_messages[-1]:
             sender = msg.get('number')
             content = msg.get('body', '')
             msg_id = int(msg.get('_id', 0))
