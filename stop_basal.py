@@ -27,6 +27,7 @@ class Config:
     SMS_RECIPIENT: str = '+79956282117'
     SMS_MESSAGE_ZERO: str = 'basal 0'
     SMS_MESSAGE_MAX_BASAL: str = 'basal 0.6'
+    SMS_MESSAGE_CANCEL: str = 'basal cancel'
     ALERT_COOLDOWN: timedelta = timedelta(hours=0.5)
     SMS_CHECK_INTERVAL: int = 60
     CODE_PATTERN: str = r'\b[A-Za-z]{3}\b'
@@ -193,7 +194,7 @@ class GlucoseMonitor:
         Sends appropriate SMS alert based on the alert type.
         """
         message = (self.config.SMS_MESSAGE_ZERO if alert_type == 'min' 
-                   else self.config.SMS_MESSAGE_MAX_BASAL)
+                   else self.config.SMS_MESSAGE_MAX_BASAL if alert_type == 'max' else self.config.SMS_MESSAGE_CANCEL)
         self.sms_handler.send_sms_and_approve(message)
         self.sms_handler.last_alert_type = alert_type
 
@@ -241,6 +242,12 @@ class GlucoseMonitor:
                         )
                         if self.should_send_alert(current_time, 'max'):
                             self.handle_alert(projected_glucose, 'max')
+                    elif self.last_alert_time  and datetime.now() - self.last_alert_time < self.config.ALERT_COOLDOWN:
+                        logging.warning(
+                            f"⚠️ ALERT: Glucose is normal. Canceling temporary basal"
+                        )
+                        if self.should_send_alert(current_time, 'cancel'):
+                            self.handle_alert(projected_glucose, 'cancel')
                     else:
                         logging.info("Glucose level is within safe range.")
 
