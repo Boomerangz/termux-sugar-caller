@@ -154,7 +154,7 @@ def process_incoming_sms():
 
 
 def send_sms_and_approve(recipient, message):
-    global awaiting_response
+    global awaiting_response, alert_sent_time, last_alert_time
     # send_sms(recipient, message)
     current_time = datetime.now()
     last_alert_time = current_time
