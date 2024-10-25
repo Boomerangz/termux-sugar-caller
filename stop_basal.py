@@ -155,6 +155,7 @@ def send_sms_and_approve(recipient, message):
     send_sms(recipient, message)
     processed = False
     while not processed:
+        print(f'[{datetime.now()}] checking response')
         processed = process_incoming_sms()
         if processed:
             break
