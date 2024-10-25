@@ -17,7 +17,7 @@ TARGET_MOL_L_PERFECT = 6.9  # Target glucose level
 
 SMS_RECIPIENT = '+79956282117'  # Replace with the recipient's phone number
 SMS_MESSAGE_ZERO = 'basal 0'
-SMS_MESSAGE_MAX_BASAL = 'basal 0.6'
+SMS_MESSAGE_MAX_BASAL_BASAL = 'basal 0.6'
 ALERT_COOLDOWN = timedelta(hours=0.5)  # Minimum time between SMS alerts
 
 SMS_CHECK_INTERVAL = 60  # Check for new SMS every 60 seconds
@@ -208,7 +208,7 @@ def main():
                 elif projected_glucose > TARGET_MOL_L_MAX and current_mmol_l > TARGET_MOL_L_PERFECT:
                     print(f"⚠️ ALERT: Glucose is projected to reach {projected_glucose:.2f} mmol/L in {PREDICTION_HOUR} hour(s).")
                     if should_send_alert(current_time, 'max'):
-                        send_sms_and_approve(SMS_RECIPIENT, SMS_MESSAGE_MAX)
+                        send_sms_and_approve(SMS_RECIPIENT, SMS_MESSAGE_MAX_BASAL)
                         last_alert_time = current_time
                         alert_sent_time = current_time
                         last_alert_type = 'max'
