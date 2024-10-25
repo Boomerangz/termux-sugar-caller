@@ -17,7 +17,7 @@ TARGET_MOL_L_PERFECT = 6.9  # Target glucose level
 
 SMS_RECIPIENT = '+79956282117'  # Replace with the recipient's phone number
 SMS_MESSAGE_ZERO = 'basal 0'
-SMS_MESSAGE_MAX_BASAL_BASAL = 'basal 0.6'
+SMS_MESSAGE_MAX_BASAL = 'basal 0.6'
 ALERT_COOLDOWN = timedelta(hours=0.5)  # Minimum time between SMS alerts
 
 SMS_CHECK_INTERVAL = 60  # Check for new SMS every 60 seconds
