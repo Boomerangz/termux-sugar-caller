@@ -108,6 +108,7 @@ def process_incoming_sms():
     global last_processed_sms_id, awaiting_response, response_handled, alert_sent_time
 
     if not awaiting_response:
+        print('Not awaiting a response, so do nothing')
         return  # Not awaiting a response, so do nothing
 
     current_time = datetime.now()
