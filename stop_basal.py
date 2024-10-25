@@ -33,6 +33,7 @@ last_alert_type = None
 last_processed_sms_id = None
 awaiting_response = False
 response_handled = False
+alert_sent_time = None
 
 def fetch_data(url):
     try:
