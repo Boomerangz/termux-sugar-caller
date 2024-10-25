@@ -158,7 +158,7 @@ def send_sms_and_approve(recipient, message):
     while not processed:
         print(f'[{datetime.now()}] checking response')
         processed = process_incoming_sms()
-        print(f'[{datetime.now()}] processed {processed}')
+        print(f'[{datetime.now()}] processed {processed} awaiting_response {awaiting_response}')
         if processed:
             break
         time.sleep(RESPONSE_CHECK_INTERVAL)
